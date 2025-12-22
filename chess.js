@@ -7,7 +7,7 @@ const PIECES = {
 // Piece values for AI evaluation
 const PIECE_VALUES = {
     'p': 10, 'n': 30, 'b': 30, 'r': 50, 'q': 90, 'k': 900,
-    'P': 10, 'N': 30, 'B': 30, 'R': 50, 'Q': 90, 'K': 900
+    'P': 10, 'N': 30, 'B': 30, 'R': 50, 'Q': 90, 'K':  900
 };
 
 // Initial board setup
@@ -29,7 +29,7 @@ class ChessGame {
         this.selectedSquare = null;
         this.validMoves = [];
         this.moveHistory = [];
-        this.capturedPieces = { white: [], black: [] };
+        this.capturedPieces = { white:  [], black: [] };
         this.gameOver = false;
         
         // Game mode properties
@@ -41,9 +41,9 @@ class ChessGame {
         this.peer = null;
         this.connection = null;
         this.peerId = null;
-        this. playerColor = null;
-        this. isOnlineGame = false;
-        this.opponentConnected = false;
+        this.playerColor = null;
+        this.isOnlineGame = false;
+        this. opponentConnected = false;
         
         this.initWelcomeScreen();
     }
@@ -78,10 +78,9 @@ class ChessGame {
             this.startLocalGame();
         });
         
-        // Play Online button
+        // Play Online button - Updated to show share modal immediately
         document.getElementById('play-online-btn').addEventListener('click', () => {
-            welcomeScreen.style.display = 'none';
-            gameContainer. style.display = 'block';
+            this.showStatus('🔄 Generating your game link...');
             this.createOnlineGame();
         });
         
@@ -128,7 +127,7 @@ class ChessGame {
         this.peer = new Peer({
             config: {
                 iceServers: [
-                    { urls:  'stun:stun. l.google.com:19302' },
+                    { urls:  'stun:stun.l.google.com:19302' },
                     { urls: 'stun:global.stun.twilio.com:3478' }
                 ]
             }
@@ -138,20 +137,32 @@ class ChessGame {
             this.peerId = id;
             console.log('My peer ID is:  ' + id);
             
+            // Transition to game screen
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const gameContainer = document.getElementById('game-container');
+            welcomeScreen.style.display = 'none';
+            gameContainer. style.display = 'block';
+            
             const indicator = document.getElementById('game-mode-indicator');
             indicator.textContent = '🌐 Online Game - Waiting for opponent... ';
             indicator.classList.add('online');
             
             // Show share button and auto-open modal
             document.getElementById('share-btn').style.display = 'block';
-            document.getElementById('share-btn').click();
             
-            this.showStatus('✅ Ready!  Share the link with your friend.');
+            // Initialize the game UI first
+            this.init();
+            
+            // Then show the share modal with the generated link
+            setTimeout(() => {
+                this.showShareModal();
+                this.showStatus('✅ Link generated! Share it with your friend to start playing.');
+            }, 100);
         });
         
         this.peer.on('connection', (conn) => {
-            this. connection = conn;
-            this. setupConnectionHandlers();
+            this.connection = conn;
+            this.setupConnectionHandlers();
             
             this.opponentConnected = true;
             this.updateConnectionStatus(true);
@@ -168,8 +179,6 @@ class ChessGame {
             console.error('PeerJS error:', err);
             this.showStatus('❌ Connection error. Please refresh and try again.');
         });
-        
-        this.init();
     }
 
     // Join an existing online game
@@ -200,7 +209,7 @@ class ChessGame {
                 reliable: true
             });
             
-            this.setupConnectionHandlers();
+            this. setupConnectionHandlers();
             
             this.connection.on('open', () => {
                 this.opponentConnected = true;
@@ -208,7 +217,7 @@ class ChessGame {
                 this.showStatus('🎉 Connected!  You are playing as Black.');
                 
                 const indicator = document.getElementById('game-mode-indicator');
-                indicator. textContent = `🌐 Online Game - You are Black`;
+                indicator.textContent = `🌐 Online Game - You are Black`;
                 indicator.classList.add('online');
                 
                 // Request game state
@@ -236,16 +245,16 @@ class ChessGame {
                     this.receiveMove(data.move);
                     break;
                 case 'game_state':
-                    this.receiveGameState(data.state);
+                    this. receiveGameState(data.state);
                     break;
                 case 'request_state':
                     this. sendGameState();
                     break;
-                case 'chat': 
+                case 'chat':
                     this.showStatus(`Opponent: ${data.message}`);
                     break;
                 case 'reset':
-                    if (confirm('Opponent wants to start a new game. Accept?')) {
+                    if (confirm('Opponent wants to start a new game.  Accept?')) {
                         this. resetGame();
                         this.connection.send({ type: 'reset_accepted' });
                     }
@@ -272,7 +281,7 @@ class ChessGame {
         this.connection.send({
             type: 'game_state',
             state: {
-                board:  this.board,
+                board: this.board,
                 currentPlayer: this.currentPlayer,
                 moveHistory: this.moveHistory,
                 capturedPieces: this.capturedPieces,
@@ -384,7 +393,7 @@ class ChessGame {
         document.getElementById('share-whatsapp').addEventListener('click', () => {
             const link = document.getElementById('game-link').value;
             const text = `🎮 Join me for a chess game! Click here: ${link}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            window.open(`https://wa.me/? text=${encodeURIComponent(text)}`, '_blank');
         });
         
         document.getElementById('share-telegram').addEventListener('click', () => {
@@ -396,7 +405,7 @@ class ChessGame {
         document.getElementById('share-email').addEventListener('click', () => {
             const link = document.getElementById('game-link').value;
             const subject = '♔ Chess Game Invitation';
-            const body = `Hi!\n\nI'd like to play chess with you online. Click this link to join the game:\n\n${link}\n\nSee you on the board!`;
+            const body = `Hi!\n\nI'd like to play chess with you online.  Click this link to join the game:\n\n${link}\n\nSee you on the board!`;
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         });
     }
@@ -413,12 +422,12 @@ class ChessGame {
         
         // Generate QR Code
         const qrContainer = document.getElementById('qr-code-container');
-        qrContainer. innerHTML = '';
+        qrContainer.innerHTML = '';
         
         if (typeof QRCode !== 'undefined') {
             new QRCode(qrContainer, {
                 text: gameLink,
-                width: 200,
+                width:  200,
                 height: 200,
                 colorDark: "#667eea",
                 colorLight:  "#ffffff",
@@ -500,7 +509,7 @@ class ChessGame {
             if (move) {
                 this. makeMove(move.from[0], move.from[1], move.to[0], move.to[1]);
                 this.renderBoard();
-                this. highlightSquares();
+                this.highlightSquares();
             }
         }, 500);
     }
@@ -512,7 +521,7 @@ class ChessGame {
     }
 
     getMediumMove() {
-        const allMoves = this.getAllValidMoves(this.aiColor);
+        const allMoves = this. getAllValidMoves(this.aiColor);
         if (allMoves.length === 0) return null;
         
         const captureMoves = allMoves.filter(move => 
@@ -534,7 +543,7 @@ class ChessGame {
         let bestScore = -Infinity;
         
         for (const move of allMoves) {
-            const score = this. evaluateMove(move);
+            const score = this.evaluateMove(move);
             if (score > bestScore) {
                 bestScore = score;
                 bestMove = move;
@@ -615,7 +624,7 @@ class ChessGame {
 
     handleSquareClick(row, col) {
         if (this.gameOver) {
-            this.showStatus('Game Over!  Click "New Game" to play again.');
+            this.showStatus('Game Over! Click "New Game" to play again.');
             return;
         }
 
@@ -626,7 +635,7 @@ class ChessGame {
 
         // In online game, check if opponent is connected and it's your turn
         if (this.isOnlineGame) {
-            if (! this.opponentConnected) {
+            if (!this.opponentConnected) {
                 this.showStatus('Waiting for opponent to connect...');
                 return;
             }
@@ -769,7 +778,7 @@ class ChessGame {
             const newCol = col + colOffset;
             if (this.isInBounds(newRow, newCol)) {
                 const target = this.board[newRow][newCol];
-                if (! target || !this.isPieceSameColor(this.board[row][col], target)) {
+                if (!target || !this.isPieceSameColor(this.board[row][col], target)) {
                     moves.push([newRow, newCol]);
                 }
             }
@@ -787,8 +796,8 @@ class ChessGame {
             let newCol = col + colDir;
 
             while (this.isInBounds(newRow, newCol)) {
-                const target = this. board[newRow][newCol];
-                if (!target) {
+                const target = this.board[newRow][newCol];
+                if (! target) {
                     moves.push([newRow, newCol]);
                 } else {
                     if (!this.isPieceSameColor(piece, target)) {
@@ -863,7 +872,7 @@ class ChessGame {
         this.updateTurnIndicator();
         
         // Trigger AI move if needed
-        if (this.gameMode === 'computer' && ! this.gameOver && ! isRemoteMove) {
+        if (this.gameMode === 'computer' && ! this.gameOver && !isRemoteMove) {
             setTimeout(() => this.makeAIMove(), 300);
         }
     }
@@ -914,7 +923,7 @@ class ChessGame {
             case 'b': return this.getBishopMoves(row, col);
             case 'q': return this.getQueenMoves(row, col);
             case 'k': return this.getKingMoves(row, col);
-            default: return [];
+            default:  return [];
         }
     }
 
@@ -961,7 +970,7 @@ class ChessGame {
                 const moveIndex = moveRow * 8 + moveCol;
                 squares[moveIndex].classList.add('valid-move');
                 if (this.board[moveRow][moveCol]) {
-                    squares[moveIndex]. classList.add('has-piece');
+                    squares[moveIndex].classList.add('has-piece');
                 }
             });
         }
@@ -997,7 +1006,7 @@ class ChessGame {
         const captureSymbol = captured ? 'x' : '-';
         li.textContent = `${PIECES[piece]} ${from} ${captureSymbol} ${to}`;
         movesList.appendChild(li);
-        movesList.parentElement.scrollTop = movesList. parentElement.scrollHeight;
+        movesList.parentElement.scrollTop = movesList.parentElement. scrollHeight;
     }
 
     showStatus(message) {
@@ -1012,7 +1021,7 @@ class ChessGame {
         undoBtn.addEventListener('click', () => this.undoMove());
 
         resetBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
+            e. preventDefault();
             this.resetGame();
         }, { passive: false });
 
@@ -1035,7 +1044,7 @@ class ChessGame {
         this.selectedSquare = null;
         this.validMoves = [];
         this.moveHistory = [];
-        this.capturedPieces = { white:  [], black: [] };
+        this.capturedPieces = { white: [], black: [] };
         this.gameOver = false;
         
         document.getElementById('moves-list').innerHTML = '';
@@ -1057,7 +1066,7 @@ class ChessGame {
         }
 
         if (this.isOnlineGame) {
-            this.showStatus('Cannot undo in online games! ');
+            this.showStatus('Cannot undo in online games!');
             return;
         }
 
@@ -1079,7 +1088,7 @@ class ChessGame {
             movesList.removeChild(movesList.lastChild);
         }
 
-        this.showStatus('Move undone! ');
+        this.showStatus('Move undone!');
         this.renderBoard();
         this.updateTurnIndicator();
     }
