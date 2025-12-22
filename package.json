@@ -1,0 +1,22 @@
+{
+  "name": "chess-game",
+  "version": "1.0.0",
+  "description": "A simple chess game implementation using HTML, CSS, and JavaScript",
+  "main": "chess.js",
+  "scripts": {
+    "start": "open index.html"
+  },
+  "keywords": [
+    "chess",
+    "game",
+    "javascript",
+    "html5",
+    "css3"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/biologicmachine-lab/chess"
+  }
+}
