@@ -33,6 +33,7 @@ class ChessGame {
         this.renderBoard();
         this.attachEventListeners();
         this.updateTurnIndicator();
+        this.updateModeButtons();
     }
 
     renderBoard() {
@@ -59,6 +60,9 @@ class ChessGame {
 
     handleSquareClick(row, col) {
         if (this.gameOver) return;
+        
+        // Prevent interaction when it's computer's turn
+        if (this.gameMode === 'computer' && this.currentPlayer === 'black') return;
 
         const piece = this.board[row][col];
 
@@ -513,7 +517,7 @@ class ChessGame {
         for (let row = 0; row < 8; row++) {
             for (let col = 0; col < 8; col++) {
                 const piece = this.board[row][col];
-                if (piece && piece === piece.toLowerCase()) {
+                if (piece && piece !== '' && piece === piece.toLowerCase()) {
                     const moves = this.getValidMoves(row, col);
                     moves.forEach(([toRow, toCol]) => {
                         allMoves.push({ from: [row, col], to: [toRow, toCol] });
