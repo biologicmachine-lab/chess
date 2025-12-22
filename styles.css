@@ -1,281 +1,95 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* Add these new styles to your existing styles. css file */
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background:  linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
+/* Connection Status */
+.connection-status {
     display: flex;
-    justify-content: center;
     align-items: center;
-    padding: 20px;
-}
-
-.container {
-    background: white;
-    border-radius: 15px;
-    padding: 30px;
-    box-shadow:  0 20px 60px rgba(0, 0, 0, 0.3);
-    max-width: 800px;
-}
-
-h1 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-    font-size: 2.5em;
-}
-
-.game-mode {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.mode-btn {
-    padding: 12px 30px;
-    font-size: 1em;
-    font-weight: bold;
-    border: none;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.9);
     border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: white;
-    background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
-}
-
-.mode-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-.mode-btn:active {
-    transform: translateY(0);
-}
-
-.mode-btn.active {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-}
-
-.game-info {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    flex-wrap:  wrap;
-    gap: 20px;
-}
-
-.turn-indicator {
-    font-size: 1.3em;
-    font-weight:  bold;
-    color: #667eea;
-    padding: 10px 20px;
-    background: #f0f0f0;
-    border-radius: 8px;
-}
-
-#current-turn {
-    color: #764ba2;
-}
-
-.captured-pieces {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.captured-white, .captured-black {
-    flex: 1;
-    min-width: 200px;
-}
-
-.captured-white h3, .captured-black h3 {
+    border: 2px solid #e0e0e0;
     font-size: 0.9em;
-    margin-bottom: 5px;
-    color: #555;
-}
-
-#captured-white, #captured-black {
-    min-height: 30px;
-    padding: 5px;
-    background: #f9f9f9;
-    border-radius: 5px;
-    font-size: 1. 5em;
-}
-
-.chessboard {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
-    width: 100%;
-    max-width: 600px;
-    aspect-ratio: 1;
-    margin: 0 auto 20px;
-    border: 3px solid #333;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-.square {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 3em;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    user-select: none;
-}
-
-.square. light {
-    background-color: #f0d9b5;
-}
-
-.square.dark {
-    background-color: #b58863;
-}
-
-.square:hover {
-    opacity: 0.8;
-}
-
-.square. selected {
-    background-color:  #7fa650 !important;
-    box-shadow: inset 0 0 0 3px #5a7a3c;
-}
-
-.square.valid-move {
-    position: relative;
-}
-
-.square.valid-move:: after {
-    content: '';
-    position: absolute;
-    width: 30%;
-    height: 30%;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 50%;
-}
-
-.square.valid-move. has-piece:: after {
-    width: 90%;
-    height: 90%;
-    background-color: transparent;
-    border: 4px solid rgba(255, 0, 0, 0.5);
-    border-radius: 50%;
-}
-
-.square.check {
-    background-color: #ff6b6b ! important;
-    animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-}
-
-.controls {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom:  20px;
-}
-
-button {
-    padding: 12px 30px;
-    font-size: 1em;
-    font-weight: bold;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: white;
-}
-
-#reset-btn {
-    background:  linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-#undo-btn {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-button:active {
-    transform: translateY(0);
-}
-
-.game-status {
-    text-align: center;
-}
-
-#status-message {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #764ba2;
-    margin-bottom: 15px;
-    min-height: 30px;
-}
-
-#move-history {
-    background: #f9f9f9;
-    border-radius: 8px;
-    padding: 15px;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-#move-history h3 {
-    font-size: 1.1em;
-    margin-bottom: 10px;
-    color: #555;
-}
-
-#moves-list {
-    list-style: none;
-    text-align: left;
-}
-
-#moves-list li {
-    padding: 5px 10px;
-    border-bottom: 1px solid #e0e0e0;
     color: #666;
 }
 
-#moves-list li:last-child {
-    border-bottom: none;
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius:  50%;
+    background: #ffa500;
+    animation: pulse 2s ease-in-out infinite;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-    .container {
-        padding: 15px;
-    }
-
-    h1 {
-        font-size: 1.8em;
-    }
-
-    .square {
-        font-size: 2em;
-    }
-
-    .game-info {
-        flex-direction: column;
-    }
-
-    .controls {
-        flex-direction: column;
-    }
-
-    button {
-        width: 100%;
-    }
+. connection-status. connected . status-dot {
+    background:  #38ef7d;
+    animation:  none;
 }
+
+. connection-status.disconnected .status-dot {
+    background: #ff6b6b;
+}
+
+/* Social Share Buttons */
+.share-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin:  20px 0;
+}
+
+.social-share-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.social-share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.whatsapp {
+    background:  #25D366;
+}
+
+.telegram {
+    background: #0088cc;
+}
+
+.email {
+    background: #667eea;
+}
+
+/* QR Code Section */
+.qr-section {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #e0e0e0;
+}
+
+.qr-section p {
+    margin-bottom: 15px;
+    color: #666;
+    font-weight: bold;
+}
+
+#qr-code-container {
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+/* Existing styles remain the same...  */
+/* Just add the above new styles to your current styles.css */
