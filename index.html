@@ -2,19 +2,115 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Chess Game - Play with Friends</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Chess Game</h1>
+    <div class="chess-background"></div>
+    
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="welcome-screen">
+        <div class="welcome-content">
+            <h1 class="welcome-title">♔ Chess Game ♚</h1>
+            <p class="welcome-subtitle">Choose your game mode</p>
+            
+            <div class="game-mode-buttons">
+                <button id="play-computer-btn" class="mode-btn computer-btn">
+                    <span class="btn-icon">🤖</span>
+                    <span class="btn-text">Play vs Computer</span>
+                    <span class="btn-desc">Challenge our AI opponent</span>
+                </button>
+                
+                <button id="play-friend-btn" class="mode-btn friend-btn">
+                    <span class="btn-icon">👥</span>
+                    <span class="btn-text">Play vs Friend</span>
+                    <span class="btn-desc">Local multiplayer on same device</span>
+                </button>
+                
+                <button id="play-online-btn" class="mode-btn online-btn">
+                    <span class="btn-icon">🌐</span>
+                    <span class="btn-text">Invite Friend Online</span>
+                    <span class="btn-desc">Share link to play remotely</span>
+                </button>
+            </div>
+            
+            <!-- Difficulty Selection (hidden initially) -->
+            <div id="difficulty-selection" class="difficulty-selection" style="display: none;">
+                <h3>Select Difficulty</h3>
+                <div class="difficulty-buttons">
+                    <button class="difficulty-btn" data-level="easy">
+                        <span class="difficulty-icon">😊</span>
+                        <span>Easy</span>
+                    </button>
+                    <button class="difficulty-btn" data-level="medium">
+                        <span class="difficulty-icon">🤔</span>
+                        <span>Medium</span>
+                    </button>
+                    <button class="difficulty-btn" data-level="hard">
+                        <span class="difficulty-icon">😈</span>
+                        <span>Hard</span>
+                    </button>
+                </div>
+                <button id="back-btn" class="back-btn">← Back</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Game Container -->
+    <div id="game-container" class="container" style="display: none;">
+        <div class="game-header">
+            <h1>♔ Chess Game ♚</h1>
+            <button id="menu-btn" class="menu-btn">📋 Menu</button>
+        </div>
         
-        <div class="game-mode">
-            <button id="invite-btn" class="mode-btn">Invite Player</button>
-            <button id="vs-computer-btn" class="mode-btn">VS Computer</button>
+        <!-- Multiplayer Controls -->
+        <div class="multiplayer-section">
+            <button id="share-btn" class="share-button" style="display: none;">
+                📤 Share Game Link
+            </button>
+            <div id="game-mode-indicator" class="game-mode-indicator">
+                🎮 Local Game
+            </div>
+            <div id="connection-status" class="connection-status" style="display: none;">
+                <span class="status-dot"></span>
+                <span id="status-text">Connecting...</span>
+            </div>
         </div>
 
+        <!-- Share Modal -->
+        <div id="share-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>🌐 Share Game Link</h2>
+                <p>Send this link to your friend to play together!</p>
+                <div class="link-container">
+                    <input type="text" id="game-link" readonly>
+                    <button id="copy-link-btn" class="copy-btn">📋 Copy</button>
+                </div>
+                <div class="share-info">
+                    <p><strong>Your Color:</strong> <span id="your-color">White</span></p>
+                    <p><strong>Your Peer ID:</strong> <code id="peer-id" style="font-size: 0.8em;"></code></p>
+                    <p><strong>Status:</strong> <span id="opponent-status">Waiting for opponent...</span></p>
+                </div>
+                <div class="share-buttons">
+                    <button id="share-whatsapp" class="social-share-btn whatsapp">
+                        <span>💬 Share on WhatsApp</span>
+                    </button>
+                    <button id="share-telegram" class="social-share-btn telegram">
+                        <span>✈️ Share on Telegram</span>
+                    </button>
+                    <button id="share-email" class="social-share-btn email">
+                        <span>📧 Share via Email</span>
+                    </button>
+                </div>
+                <div class="qr-section">
+                    <p>Or scan QR code: </p>
+                    <div id="qr-code-container"></div>
+                </div>
+            </div>
+        </div>
+        
         <div class="game-info">
             <div class="turn-indicator">
                 <span id="current-turn">White</span>'s turn
@@ -36,19 +132,25 @@
         </div>
 
         <div class="controls">
-            <button id="reset-btn">New Game</button>
-            <button id="undo-btn">Undo Move</button>
+            <button id="reset-btn">🔄 New Game</button>
+            <button id="undo-btn">↩️ Undo Move</button>
         </div>
 
         <div class="game-status">
             <div id="status-message"></div>
             <div id="move-history">
-                <h3>Move History:</h3>
+                <h3>Move History: </h3>
                 <ul id="moves-list"></ul>
             </div>
         </div>
     </div>
 
+    <!-- PeerJS Library -->
+    <script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
+    
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
     <script src="chess.js"></script>
 </body>
 </html>
