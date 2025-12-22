@@ -21,8 +21,8 @@ class ChessGame {
         this.board = JSON.parse(JSON.stringify(INITIAL_BOARD));
         this.currentPlayer = 'white';
         this.selectedSquare = null;
-        this. validMoves = [];
-        this. moveHistory = [];
+        this.validMoves = [];
+        this.moveHistory = [];
         this.capturedPieces = { white: [], black: [] };
         this.gameOver = false;
         this.init();
@@ -40,8 +40,8 @@ class ChessGame {
 
         for (let row = 0; row < 8; row++) {
             for (let col = 0; col < 8; col++) {
-                const square = document. createElement('div');
-                square. className = `square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
+                const square = document.createElement('div');
+                square.className = `square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
                 square.dataset.row = row;
                 square.dataset.col = col;
 
@@ -62,11 +62,11 @@ class ChessGame {
         const piece = this.board[row][col];
 
         if (this.selectedSquare) {
-            const [selectedRow, selectedCol] = this. selectedSquare;
+            const [selectedRow, selectedCol] = this.selectedSquare;
             
             if (this.isValidMove(selectedRow, selectedCol, row, col)) {
-                this. makeMove(selectedRow, selectedCol, row, col);
-                this. selectedSquare = null;
+                this.makeMove(selectedRow, selectedCol, row, col);
+                this.selectedSquare = null;
                 this.validMoves = [];
             } else if (piece && this.isPieceOwnedByCurrentPlayer(piece)) {
                 this.selectSquare(row, col);
@@ -93,7 +93,7 @@ class ChessGame {
     }
 
     getValidMoves(row, col) {
-        const piece = this.board[row][col]. toLowerCase();
+        const piece = this.board[row][col].toLowerCase();
         let moves = [];
 
         switch (piece) {
@@ -105,7 +105,7 @@ class ChessGame {
             case 'k': moves = this.getKingMoves(row, col); break;
         }
 
-        return moves. filter(([toRow, toCol]) => !this.wouldBeInCheck(row, col, toRow, toCol));
+        return moves.filter(([toRow, toCol]) => !this.wouldBeInCheck(row, col, toRow, toCol));
     }
 
     getPawnMoves(row, col) {
@@ -119,7 +119,7 @@ class ChessGame {
             moves.push([row + direction, col]);
             
             // Double move from starting position
-            if (row === startRow && ! this.board[row + 2 * direction][col]) {
+            if (row === startRow && !this.board[row + 2 * direction][col]) {
                 moves.push([row + 2 * direction, col]);
             }
         }
@@ -130,7 +130,7 @@ class ChessGame {
             const newCol = col + colOffset;
             if (this.isInBounds(newRow, newCol)) {
                 const target = this.board[newRow][newCol];
-                if (target && ! this.isPieceSameColor(piece, target)) {
+                if (target && !this.isPieceSameColor(piece, target)) {
                     moves.push([newRow, newCol]);
                 }
             }
@@ -166,7 +166,7 @@ class ChessGame {
             const newCol = col + colOffset;
             if (this.isInBounds(newRow, newCol)) {
                 const target = this.board[newRow][newCol];
-                if (! target || ! this.isPieceSameColor(this.board[row][col], target)) {
+                if (!target || !this.isPieceSameColor(this.board[row][col], target)) {
                     moves.push([newRow, newCol]);
                 }
             }
@@ -188,7 +188,7 @@ class ChessGame {
             const newCol = col + colOffset;
             if (this.isInBounds(newRow, newCol)) {
                 const target = this.board[newRow][newCol];
-                if (!target || !this. isPieceSameColor(this. board[row][col], target)) {
+                if (!target || !this.isPieceSameColor(this.board[row][col], target)) {
                     moves.push([newRow, newCol]);
                 }
             }
@@ -206,7 +206,7 @@ class ChessGame {
             let newCol = col + colDir;
 
             while (this.isInBounds(newRow, newCol)) {
-                const target = this. board[newRow][newCol];
+                const target = this.board[newRow][newCol];
                 if (!target) {
                     moves.push([newRow, newCol]);
                 } else {
@@ -260,7 +260,7 @@ class ChessGame {
         this.board[fromRow][fromCol] = '';
 
         // Pawn promotion
-        if (piece. toLowerCase() === 'p' && (toRow === 0 || toRow === 7)) {
+        if (piece.toLowerCase() === 'p' && (toRow === 0 || toRow === 7)) {
             this.board[toRow][toCol] = piece === piece.toUpperCase() ? 'Q' : 'q';
         }
 
@@ -323,7 +323,7 @@ class ChessGame {
     }
 
     getValidMovesWithoutCheckTest(row, col) {
-        const piece = this.board[row][col]. toLowerCase();
+        const piece = this.board[row][col].toLowerCase();
         switch (piece) {
             case 'p': return this.getPawnMoves(row, col);
             case 'r': return this.getRookMoves(row, col);
@@ -352,7 +352,7 @@ class ChessGame {
 
         for (let row = 0; row < 8; row++) {
             for (let col = 0; col < 8; col++) {
-                const piece = this. board[row][col];
+                const piece = this.board[row][col];
                 if (piece && this.isPieceOwnedByCurrentPlayer(piece)) {
                     const moves = this.getValidMoves(row, col);
                     if (moves.length > 0) return false;
@@ -374,11 +374,11 @@ class ChessGame {
             const index = row * 8 + col;
             squares[index].classList.add('selected');
 
-            this.validMoves. forEach(([moveRow, moveCol]) => {
+            this.validMoves.forEach(([moveRow, moveCol]) => {
                 const moveIndex = moveRow * 8 + moveCol;
                 squares[moveIndex].classList.add('valid-move');
                 if (this.board[moveRow][moveCol]) {
-                    squares[moveIndex]. classList.add('has-piece');
+                    squares[moveIndex].classList.add('has-piece');
                 }
             });
         }
@@ -395,7 +395,7 @@ class ChessGame {
 
     updateTurnIndicator() {
         document.getElementById('current-turn').textContent = 
-            this.currentPlayer. charAt(0).toUpperCase() + this.currentPlayer.slice(1);
+            this.currentPlayer.charAt(0).toUpperCase() + this.currentPlayer.slice(1);
     }
 
     updateCapturedPieces() {
@@ -414,7 +414,7 @@ class ChessGame {
         const captureSymbol = captured ? 'x' : '-';
         li.textContent = `${PIECES[piece]} ${from} ${captureSymbol} ${to}`;
         movesList.appendChild(li);
-        movesList.parentElement.scrollTop = movesList. parentElement.scrollHeight;
+        movesList.parentElement.scrollTop = movesList.parentElement.scrollHeight;
     }
 
     showStatus(message) {
@@ -447,9 +447,9 @@ class ChessGame {
 
         const lastMove = this.moveHistory.pop();
         this.board = lastMove.board;
-        this. currentPlayer = this.currentPlayer === 'white' ? 'black' : 'white';
+        this.currentPlayer = this.currentPlayer === 'white' ? 'black' : 'white';
         this.selectedSquare = null;
-        this. validMoves = [];
+        this.validMoves = [];
         this.gameOver = false;
 
         if (lastMove.captured) {
