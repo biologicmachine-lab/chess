@@ -29,6 +29,38 @@ h1 {
     font-size: 2.5em;
 }
 
+.game-mode {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.mode-btn {
+    padding: 12px 30px;
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
+}
+
+.mode-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.mode-btn:active {
+    transform: translateY(0);
+}
+
+.mode-btn.active {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
 .game-info {
     display: flex;
     justify-content: space-between;
