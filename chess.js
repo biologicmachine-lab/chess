@@ -25,6 +25,7 @@ class ChessGame {
         this. moveHistory = [];
         this.capturedPieces = { white: [], black: [] };
         this.gameOver = false;
+        this.gameMode = 'local'; // 'local' or 'computer'
         this.init();
     }
 
@@ -281,6 +282,11 @@ class ChessGame {
         }
 
         this.updateTurnIndicator();
+        
+        // If playing against computer and it's computer's turn (black)
+        if (this.gameMode === 'computer' && this.currentPlayer === 'black' && !this.gameOver) {
+            setTimeout(() => this.makeComputerMove(), 500);
+        }
     }
 
     wouldBeInCheck(fromRow, fromCol, toRow, toCol) {
@@ -424,6 +430,8 @@ class ChessGame {
     attachEventListeners() {
         document.getElementById('reset-btn').addEventListener('click', () => this.resetGame());
         document.getElementById('undo-btn').addEventListener('click', () => this.undoMove());
+        document.getElementById('invite-btn').addEventListener('click', () => this.invitePlayer());
+        document.getElementById('vs-computer-btn').addEventListener('click', () => this.startComputerGame());
     }
 
     resetGame() {
@@ -466,6 +474,65 @@ class ChessGame {
         this.showStatus('');
         this.renderBoard();
         this.updateTurnIndicator();
+    }
+
+    invitePlayer() {
+        // Reset to local multiplayer mode
+        this.gameMode = 'local';
+        this.resetGame();
+        this.updateModeButtons();
+        this.showStatus('Local multiplayer mode - Pass the device to play!');
+    }
+
+    startComputerGame() {
+        // Set computer mode
+        this.gameMode = 'computer';
+        this.resetGame();
+        this.updateModeButtons();
+        this.showStatus('Playing against computer - You are White!');
+    }
+
+    updateModeButtons() {
+        const inviteBtn = document.getElementById('invite-btn');
+        const vsComputerBtn = document.getElementById('vs-computer-btn');
+        
+        if (this.gameMode === 'local') {
+            inviteBtn.classList.add('active');
+            vsComputerBtn.classList.remove('active');
+        } else {
+            inviteBtn.classList.remove('active');
+            vsComputerBtn.classList.add('active');
+        }
+    }
+
+    makeComputerMove() {
+        if (this.gameOver || this.currentPlayer !== 'black') return;
+
+        // Get all possible moves for black pieces
+        const allMoves = [];
+        for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+                const piece = this.board[row][col];
+                if (piece && piece === piece.toLowerCase()) {
+                    const moves = this.getValidMoves(row, col);
+                    moves.forEach(([toRow, toCol]) => {
+                        allMoves.push({ from: [row, col], to: [toRow, toCol] });
+                    });
+                }
+            }
+        }
+
+        // Choose a random move
+        if (allMoves.length > 0) {
+            const randomMove = allMoves[Math.floor(Math.random() * allMoves.length)];
+            const [fromRow, fromCol] = randomMove.from;
+            const [toRow, toCol] = randomMove.to;
+            
+            this.selectedSquare = null;
+            this.validMoves = [];
+            this.makeMove(fromRow, fromCol, toRow, toCol);
+            this.renderBoard();
+        }
     }
 }
 
