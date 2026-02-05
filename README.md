@@ -1,2 +1,2 @@
-# Landing for custom qr codes
-## Images and text
+# Landing for custom qr code
+## Image and text
