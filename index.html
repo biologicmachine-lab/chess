@@ -1,157 +1,124 @@
-<! DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Chess Game - Play with Friends</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="chess.js"></script>
-      <script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Landing Page</title>
+
+  <style>
+    :root {
+      --primary: #4f46e5; /* Indigo */
+      --shadow: rgba(0, 0, 0, 0.25);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f4f6fb;
+      color: #222;
+    }
+
+    /* Header */
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 4px 12px var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+    }
+
+    header p {
+      opacity: 0.9;
+      margin-top: 0.4rem;
+    }
+
+    /* Image section */
+    .hero-image {
+      width: 100%;
+      max-height: 400px;
+      overflow: hidden;
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Content */
+    .content {
+      padding: 2rem;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .content h2 {
+      margin-bottom: 1rem;
+    }
+
+    .content p {
+      line-height: 1.6;
+    }
+
+    /* Small animation effect */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s ease;
+    }
+
+    .fade-in.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
 </head>
+
 <body>
-    <div class="chess-background"></div>
-    
-    <!-- Welcome Screen -->
-    <div id="welcome-screen" class="welcome-screen">
-        <div class="welcome-content">
-            <h1 class="welcome-title">♔ Chess Game ♚</h1>
-            <p class="welcome-subtitle">Choose your game mode</p>
-            
-            <div class="game-mode-buttons">
-                <button id="play-computer-btn" class="mode-btn computer-btn">
-                    <span class="btn-icon">🤖</span>
-                    <span class="btn-text">Play vs Computer</span>
-                    <span class="btn-desc">Challenge our AI opponent</span>
-                </button>
-                
-                <button id="play-friend-btn" class="mode-btn friend-btn">
-                    <span class="btn-icon">👥</span>
-                    <span class="btn-text">Play vs Friend</span>
-                    <span class="btn-desc">Local multiplayer on same device</span>
-                </button>
-                
-                <button id="play-online-btn" class="mode-btn online-btn">
-                    <span class="btn-icon">🌐</span>
-                    <span class="btn-text">Invite Friend Online</span>
-                    <span class="btn-desc">Share link to play remotely</span>
-                </button>
-            </div>
-            
-            <!-- Difficulty Selection (hidden initially) -->
-            <div id="difficulty-selection" class="difficulty-selection" style="display: none;">
-                <h3>Select Difficulty</h3>
-                <div class="difficulty-buttons">
-                    <button class="difficulty-btn" data-level="easy">
-                        <span class="difficulty-icon">😊</span>
-                        <span>Easy</span>
-                    </button>
-                    <button class="difficulty-btn" data-level="medium">
-                        <span class="difficulty-icon">🤔</span>
-                        <span>Medium</span>
-                    </button>
-                    <button class="difficulty-btn" data-level="hard">
-                        <span class="difficulty-icon">😈</span>
-                        <span>Hard</span>
-                    </button>
-                </div>
-                <button id="back-btn" class="back-btn">← Back</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Main Game Container -->
-    <div id="game-container" class="container" style="display: none;">
-        <div class="game-header">
-            <h1>♔ Chess Game ♚</h1>
-            <button id="menu-btn" class="menu-btn">📋 Menu</button>
-        </div>
-        
-        <!-- Multiplayer Controls -->
-        <div class="multiplayer-section">
-            <button id="share-btn" class="share-button" style="display: none;">
-                📤 Share Game Link
-            </button>
-            <div id="game-mode-indicator" class="game-mode-indicator">
-                🎮 Local Game
-            </div>
-            <div id="connection-status" class="connection-status" style="display: none;">
-                <span class="status-dot"></span>
-                <span id="status-text">Connecting...</span>
-            </div>
-        </div>
 
-        <!-- Share Modal -->
-        <div id="share-modal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>🌐 Share Game Link</h2>
-                <p>Send this link to your friend to play together!</p>
-                <div class="link-container">
-                    <input type="text" id="game-link" readonly>
-                    <button id="copy-link-btn" class="copy-btn">📋 Copy</button>
-                </div>
-                <div class="share-info">
-                    <p><strong>Your Color:</strong> <span id="your-color">White</span></p>
-                    <p><strong>Your Peer ID:</strong> <code id="peer-id" style="font-size: 0.8em;"></code></p>
-                    <p><strong>Status:</strong> <span id="opponent-status">Waiting for opponent...</span></p>
-                </div>
-                <div class="share-buttons">
-                    <button id="share-whatsapp" class="social-share-btn whatsapp">
-                        <span>💬 Share on WhatsApp</span>
-                    </button>
-                    <button id="share-telegram" class="social-share-btn telegram">
-                        <span>✈️ Share on Telegram</span>
-                    </button>
-                    <button id="share-email" class="social-share-btn email">
-                        <span>📧 Share via Email</span>
-                    </button>
-                </div>
-                <div class="qr-section">
-                    <p>Or scan QR code: </p>
-                    <div id="qr-code-container"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="game-info">
-            <div class="turn-indicator">
-                <span id="current-turn">White</span>'s turn
-            </div>
-            <div class="captured-pieces">
-                <div class="captured-white">
-                    <h3>Captured White Pieces: </h3>
-                    <div id="captured-white"></div>
-                </div>
-                <div class="captured-black">
-                    <h3>Captured Black Pieces:</h3>
-                    <div id="captured-black"></div>
-                </div>
-            </div>
-        </div>
+  <!-- Header -->
+  <header>
+    <h1>My Landing Page</h1>
+    <p>Simple, clean, and modern design</p>
+  </header>
 
-        <div class="chessboard" id="chessboard">
-            <!-- Chess board will be generated by JavaScript -->
-        </div>
+  <!-- Image below header -->
+  <section class="hero-image">
+    <img
+      src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d"
+      alt="Landing Image"
+    />
+  </section>
 
-        <div class="controls">
-            <button id="reset-btn">🔄 New Game</button>
-            <button id="undo-btn">↩️ Undo Move</button>
-        </div>
+  <!-- Main content -->
+  <main class="content fade-in">
+    <h2>Welcome</h2>
+    <p>
+      This is a lightweight landing page built with plain HTML, CSS, and JavaScript.
+      It includes a colored header with a shadow and a full-width image directly
+      below it. You can easily customize colors, text, and images.
+    </p>
+  </main>
 
-        <div class="game-status">
-            <div id="status-message"></div>
-            <div id="move-history">
-                <h3>Move History: </h3>
-                <ul id="moves-list"></ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- PeerJS Library -->
-  
-    
-    <!-- QR Code Library -->
+  <!-- JS -->
+  <script>
+    // Simple fade-in on load
+    window.addEventListener("load", () => {
+      document.querySelector(".fade-in").classList.add("show");
+    });
+  </script>
 
 </body>
 </html>
