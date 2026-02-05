@@ -1,15 +1,294 @@
-<!-- Restored content of index.html from commit c9494ba3fbb76eb022a7eab3511f3df222808709 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Game</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Chess Game - QR Code Display</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .input-section {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        select, input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        textarea {
+            min-height: 150px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .preview-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        #imagePreview {
+            max-width: 100%;
+            max-height: 400px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        
+        .error-message {
+            color: #d32f2f;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .info-text {
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
     <h1>Welcome to Chess!</h1>
-    <div id="board"></div>
-    <script src="script.js"></script>
+    <h2 style="text-align: center; color: #666;">Image Display Tool</h2>
+    
+    <div class="container">
+        <div class="input-section">
+            <label for="imageInputType">Select Image Input Type:</label>
+            <select id="imageInputType" aria-label="Choose between URL or Base64 image input">
+                <option value="url">Image URL</option>
+                <option value="base64">Base64 Encoded Image</option>
+            </select>
+        </div>
+        
+        <div id="urlInputSection" class="input-section">
+            <label for="imageUrl">Image URL:</label>
+            <input 
+                type="text" 
+                id="imageUrl" 
+                placeholder="Enter image URL (e.g., https://example.com/image.png)"
+                aria-label="Enter image URL"
+            />
+            <p class="info-text">Paste a direct link to an image</p>
+        </div>
+        
+        <div id="base64InputSection" class="input-section hidden">
+            <label for="imageBase64">Base64 Encoded Image:</label>
+            <textarea 
+                id="imageBase64" 
+                placeholder="Paste your base64 encoded image string here (including data:image prefix recommended)"
+                aria-label="Enter base64 encoded image data"
+            ></textarea>
+            <p class="info-text">For best results, paste the full data URI (e.g., data:image/png;base64,iVBORw0KG...). Without the prefix, PNG format is assumed.</p>
+        </div>
+        
+        <div id="errorMessage" class="error-message hidden" role="alert"></div>
+    </div>
+    
+    <div class="container preview-section">
+        <h3>Image Preview:</h3>
+        <img 
+            id="imagePreview" 
+            src="" 
+            alt="Image preview will appear here" 
+            style="display: none;"
+        />
+        <p id="previewPlaceholder" style="color: #999; padding: 40px;">
+            No image loaded. Please enter an image URL or paste a base64 encoded image above.
+        </p>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const imageInputType = document.getElementById('imageInputType');
+        const urlInputSection = document.getElementById('urlInputSection');
+        const base64InputSection = document.getElementById('base64InputSection');
+        const imageUrl = document.getElementById('imageUrl');
+        const imageBase64 = document.getElementById('imageBase64');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewPlaceholder = document.getElementById('previewPlaceholder');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        // Toggle between URL and Base64 input
+        imageInputType.addEventListener('change', function() {
+            const selectedType = this.value;
+            
+            if (selectedType === 'url') {
+                urlInputSection.classList.remove('hidden');
+                base64InputSection.classList.add('hidden');
+                imageBase64.value = '';
+                hideError();
+            } else if (selectedType === 'base64') {
+                urlInputSection.classList.add('hidden');
+                base64InputSection.classList.remove('hidden');
+                imageUrl.value = '';
+                hideError();
+            }
+        });
+        
+        // Handle URL input
+        imageUrl.addEventListener('input', function() {
+            const url = this.value.trim();
+            
+            if (url === '') {
+                hideImage();
+                hideError();
+                return;
+            }
+            
+            // Validate URL format
+            try {
+                new URL(url);
+                updateImage(url);
+                hideError();
+            } catch (e) {
+                showError('Please enter a valid URL');
+                hideImage();
+            }
+        });
+        
+        // Handle Base64 input
+        imageBase64.addEventListener('input', function() {
+            const base64String = this.value.trim();
+            
+            if (base64String === '') {
+                hideImage();
+                hideError();
+                return;
+            }
+            
+            // Check if the string already has the data URI prefix
+            let dataUri;
+            if (base64String.startsWith('data:image')) {
+                dataUri = base64String;
+            } else {
+                // Try to detect image type by attempting to decode the base64
+                // Default to PNG as it's the most common format
+                // The browser will handle the actual rendering and show an error if it fails
+                const cleanBase64 = base64String.replace(/\s/g, '');
+                
+                // Try common image formats - browser will error if wrong type
+                // Start with PNG as default, but SVG+XML and JPEG are also common
+                dataUri = 'data:image/png;base64,' + cleanBase64;
+            }
+            
+            // Validate base64 string
+            if (isValidBase64Image(base64String)) {
+                updateImage(dataUri);
+                hideError();
+            } else {
+                showError('Invalid base64 image string. Please check your input.');
+                hideImage();
+            }
+        });
+        
+        // Update the image preview
+        function updateImage(src) {
+            imagePreview.src = src;
+            imagePreview.style.display = 'block';
+            previewPlaceholder.style.display = 'none';
+            
+            // Handle image load error
+            imagePreview.onerror = function() {
+                showError('Failed to load image. Please check your input.');
+                hideImage();
+            };
+            
+            // Handle successful image load
+            imagePreview.onload = function() {
+                hideError();
+            };
+        }
+        
+        // Hide the image preview
+        function hideImage() {
+            imagePreview.style.display = 'none';
+            imagePreview.src = '';
+            previewPlaceholder.style.display = 'block';
+        }
+        
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+        
+        // Hide error message
+        function hideError() {
+            errorMessage.textContent = '';
+            errorMessage.classList.add('hidden');
+        }
+        
+        // Validate base64 image string
+        function isValidBase64Image(str) {
+            // Remove data URI prefix if present
+            let base64Data = str;
+            if (str.startsWith('data:image')) {
+                const parts = str.split(',');
+                if (parts.length === 2) {
+                    base64Data = parts[1];
+                }
+            }
+            
+            // Remove any whitespace (spaces, newlines, tabs)
+            base64Data = base64Data.replace(/\s/g, '');
+            
+            // Basic base64 validation
+            const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+            
+            // Check if string matches base64 pattern
+            if (!base64Regex.test(base64Data)) {
+                return false;
+            }
+            
+            // Check if length is valid (base64 length should be multiple of 4)
+            if (base64Data.length % 4 !== 0) {
+                return false;
+            }
+            
+            // If it's very short, it's probably not a valid image
+            if (base64Data.length < 100) {
+                return false;
+            }
+            
+            return true;
+        }
+    </script>
 </body>
 </html>
