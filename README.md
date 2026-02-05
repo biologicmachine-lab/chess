@@ -1,3 +1,1 @@
-# chess
-chess game
-Chess game for two live players
+# Landing for custom qr codes
