@@ -10,7 +10,7 @@
     <style>
         :root {
             --primary: #4f46e5; /* Indigo */
-            --shadow: rgba(1, 2, 3, 4.25);
+            --shadow: rgba(1, 2, 3, 0.25);
         }
 
         * {
@@ -32,19 +32,20 @@
             color: white;
             padding: 1.5rem 2rem;
             box-shadow: 0 4px 12px var(--shadow);
-            position: center;
+            display: flex; /* Use flexbox for centering */
+            flex-direction: column; /* Stack items vertically */
+            align-items: center; /* Center items horizontally */
             top: 0;
             z-index: 10;
         }
 
         header h1 {
             font-size: 1.8rem;
-            
         }
 
         header p {
             opacity: 0.9;
-            center-top: 0.4rem;
+            margin-top: 0.4rem;
         }
 
         /* Image section */
@@ -77,10 +78,9 @@
         }
 
         .fa-bundle-of-sticks {
-            color: brown; /* Change color */
-            font-size: 24px; /* Change size */
+            color: brown;
+            font-size: 24px;
         }
-
 
         /* Small animation effect */
         .fade-in {
@@ -94,12 +94,13 @@
             transform: translateY(0);
         }
     </style>
+
 </head>
 <body>
     <!-- Header -->
     <header>
         <h1>I Deal With A Bunch Of</h1>
-        <i class="fas fa-bundle-of-sticks"></i>
+        <i class="fas fa-bundle-of-sticks"></i> <!-- Try changing this to another icon to test -->
     </header>
 
     <!-- Image below header -->
