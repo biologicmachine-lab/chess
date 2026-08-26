@@ -1,0 +1,111 @@
+.case{
+  display:flex;
+  gap:28px;
+  align-items:flex-start;
+  flex-wrap:wrap;
+  justify-content:center;
+  max-width:920px;
+  width:100%;
+}
+
+.panel{ width:270px; display:flex; flex-direction:column; gap:16px; }
+
+.status-line{
+  font-family:'Playfair Display', serif;
+  font-style:italic;
+  font-size:20px;
+  color:var(--ivory);
+  min-height:28px;
+}
+.status-line.alert{ color:#e0a08f; }
+
+.turn-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--parchment-dim);
+  margin-top:8px;
+}
+.turn-dot{ width:11px; height:11px; border-radius:50%; background:var(--ivory); box-shadow:0 0 0 1px rgba(0,0,0,.4); }
+.turn-dot.black{ background:var(--ebony); }
+
+.mode-note{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  color:var(--brass-bright);
+  margin-top:10px;
+  letter-spacing:.04em;
+}
+
+.trays{ display:flex; flex-direction:column; gap:10px; }
+.tray{
+  background:var(--felt);
+  border-radius:4px;
+  padding:8px 10px;
+  min-height:34px;
+  font-size:24px;
+  letter-spacing:2px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.4);
+}
+.tray .label{
+  font-family:'JetBrains Mono', monospace;
+  font-size:10px;
+  letter-spacing:.15em;
+  color:var(--parchment-dim);
+  width:100%;
+  margin-bottom:2px;
+}
+
+.history{
+  max-height:190px;
+  overflow-y:auto;
+  font-family:'JetBrains Mono', monospace;
+  font-size:13px;
+  line-height:1.9;
+  color:var(--parchment-dim);
+}
+.history ol{ margin:0; padding-left:22px; }
+.history li::marker{ color:var(--brass); }
+.history b{ color:var(--ivory); }
+
+.buttons{ display:flex; gap:10px; }
+.buttons button{ flex:1; }
+
+.promo-overlay{
+  position:fixed; inset:0;
+  background:rgba(20,12,8,.75);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:20;
+}
+.promo-overlay.open{ display:flex; }
+.promo-box{
+  background:var(--walnut);
+  border:1px solid var(--brass);
+  border-radius:8px;
+  padding:22px 26px;
+  text-align:center;
+}
+.promo-box p{
+  font-family:'JetBrains Mono', monospace;
+  font-size:11px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--brass-bright);
+  margin:0 0 14px;
+}
+.promo-choices{ display:flex; gap:10px; }
+.promo-choices button{ font-size:30px; background:var(--parchment); padding:12px 16px; }
+
+@media (max-width:640px){
+  .case{ flex-direction:column; align-items:center; }
+  .panel{ width:100%; max-width:420px; }
+}
