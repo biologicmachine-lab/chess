@@ -48,9 +48,44 @@
 .sq.light{ background:var(--parchment); }
 .sq.dark{ background:var(--felt); }
 
-.piece{ line-height:1; pointer-events:none; }
-.piece.white{ color:var(--ivory); text-shadow:0 1px 2px rgba(0,0,0,.5), 0 0 0 1px rgba(60,40,20,.25); }
-.piece.black{ color:var(--ebony); text-shadow:0 1px 1px rgba(255,255,255,.15); }
+.piece{ line-height:1; pointer-events:none; -webkit-text-stroke:0.5px rgba(0,0,0,.5); }
+
+/* White — polished chrome */
+.piece.white{
+  background:linear-gradient(180deg, #ffffff 0%, #f1f1f1 20%, #b9b9b9 48%, #7c7c7c 72%, #4a4a4a 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  filter:
+    drop-shadow(0 -1px 0 rgba(255,255,255,.9))
+    drop-shadow(0 3px 2px rgba(0,0,0,.55))
+    drop-shadow(0 6px 6px rgba(0,0,0,.35));
+}
+
+/* Black — burnished copper */
+.piece.black{
+  background:linear-gradient(180deg, #f3c69a 0%, #d9925a 22%, #a85a2c 50%, #7a3c18 78%, #4a2410 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  filter:
+    drop-shadow(0 -1px 0 rgba(255,220,180,.8))
+    drop-shadow(0 3px 2px rgba(0,0,0,.55))
+    drop-shadow(0 6px 6px rgba(0,0,0,.35));
+}
+
+/* Pawns read a touch smaller than the back-rank pieces */
+.piece.pawn{ font-size:0.75em; }
+
+/* Local pass-and-play only: rotate Black's pieces 180deg so they read
+   upright to the player sitting opposite, facing White's pieces across
+   the board. Toggle the "inward-facing" class on #board when a local
+   PvP game starts, and remove it for online/computer modes. */
+.board.inward-facing .piece.black{
+  display:inline-block;
+  transform:rotate(180deg);
+}
+
 
 .sq.selected{ box-shadow:inset 0 0 0 3px var(--brass-bright), inset 0 0 0 999px rgba(212,175,106,.22); }
 .sq.last-from, .sq.last-to{ box-shadow:inset 0 0 0 999px rgba(212,175,106,.28); }
