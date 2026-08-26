@@ -1,0 +1,72 @@
+.board-wrap{
+  background:linear-gradient(160deg, var(--walnut-light), var(--walnut) 55%, var(--walnut-dark));
+  padding:18px;
+  border-radius:6px;
+  box-shadow:
+    0 0 0 1px rgba(176,141,87,.35),
+    0 20px 50px rgba(0,0,0,.55),
+    inset 0 0 0 1px rgba(0,0,0,.3);
+  position:relative;
+}
+.board-wrap::before{
+  content:"";
+  position:absolute;
+  inset:8px;
+  border:1px solid rgba(176,141,87,.45);
+  border-radius:3px;
+  pointer-events:none;
+}
+.board-hinge{
+  position:absolute;
+  width:22px;
+  height:8px;
+  background:linear-gradient(180deg, var(--brass-bright), var(--brass));
+  border-radius:2px;
+  box-shadow:0 1px 3px rgba(0,0,0,.6);
+}
+.board-hinge.left{ top:-4px; left:28px; }
+.board-hinge.right{ top:-4px; right:28px; }
+
+.board{
+  display:grid;
+  grid-template-columns:repeat(8, minmax(38px,64px));
+  grid-template-rows:repeat(8, minmax(38px,64px));
+  border:3px solid var(--brass);
+  border-radius:2px;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.4), inset 0 4px 18px rgba(0,0,0,.35);
+  overflow:hidden;
+}
+.sq{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(26px,5vw,44px);
+  cursor:pointer;
+  user-select:none;
+}
+.sq.light{ background:var(--parchment); }
+.sq.dark{ background:var(--felt); }
+
+.piece{ line-height:1; pointer-events:none; }
+.piece.white{ color:var(--ivory); text-shadow:0 1px 2px rgba(0,0,0,.5), 0 0 0 1px rgba(60,40,20,.25); }
+.piece.black{ color:var(--ebony); text-shadow:0 1px 1px rgba(255,255,255,.15); }
+
+.sq.selected{ box-shadow:inset 0 0 0 3px var(--brass-bright), inset 0 0 0 999px rgba(212,175,106,.22); }
+.sq.last-from, .sq.last-to{ box-shadow:inset 0 0 0 999px rgba(212,175,106,.28); }
+.sq.check{ box-shadow:inset 0 0 0 999px rgba(138,51,36,.45); }
+
+.sq .dot{
+  position:absolute; width:22%; height:22%; border-radius:50%;
+  background:rgba(176,141,87,.75); pointer-events:none;
+}
+.sq .ring{
+  position:absolute; inset:6%; border-radius:50%;
+  border:4px solid rgba(138,51,36,.7); pointer-events:none;
+}
+
+.sq .rank-label{ position:absolute; top:2px; left:3px; font-family:'JetBrains Mono', monospace; font-size:10px; color:rgba(0,0,0,.35); }
+.sq .file-label{ position:absolute; bottom:1px; right:3px; font-family:'JetBrains Mono', monospace; font-size:10px; color:rgba(0,0,0,.35); }
+.sq.dark .rank-label, .sq.dark .file-label{ color:rgba(237,228,211,.45); }
+
+.board.locked{ pointer-events:none; opacity:.85; }
