@@ -1,124 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campaign Chess</title>
 
-    <title>Simple Landing Page</title>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/menu.css">
+<link rel="stylesheet" href="css/board.css">
+<link rel="stylesheet" href="css/panel.css">
 
-    <style>
-        :root {
-            --primary: #4f46e5; /* Indigo */
-            --shadow: rgba(1, 2, 3, 0.25);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
-            text-align: center;
-        }
-
-        body {
-            background: #f4f6fb;
-            color: #222;
-        }
-
-        /* Header */
-        header {
-            background: var(--primary);
-            color: white;
-            padding: 1.5rem 2rem;
-            box-shadow: 0 4px 12px var(--shadow);
-            display: flex; /* Use flexbox for centering */
-            flex-direction: column; /* Stack items vertically */
-            align-items: center; /* Center items horizontally */
-            top: 0;
-            z-index: 10;
-        }
-
-        header h1 {
-            font-size: 1.8rem;
-        }
-
-        header p {
-            opacity: 0.9;
-            margin-top: 0.4rem;
-        }
-
-        /* Image section */
-        .hero-image {
-            width: 100%;
-            max-height: 400px;
-            overflow: hidden;
-        }
-
-        .hero-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* Content */
-        .content {
-            padding: 2rem;
-            max-width: 900px;
-            margin: auto;
-        }
-
-        .content h2 {
-            margin-bottom: 1rem;
-        }
-
-        .content p {
-            line-height: 1.6;
-        }
-
-        .fa-bundle-of-sticks {
-            color: brown;
-            font-size: 24px;
-        }
-
-        /* Small animation effect */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.8s ease;
-        }
-
-        .fade-in.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.min.js"></script>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <h1>I Deal With A Bunch Of ...</h1>
-        <i class="fas fa-bundle-of-firewood" <!-- Try changing this to another icon to test -->
-    </header>
 
-    <!-- Image below header -->
-    <section class="hero-image">
-        <img src="IMG_5622.jpeg" alt="Landing Image" />
-    </section>
+  <!-- ===================== MENU ===================== -->
+  <div id="menu-screen" class="screen">
+    <div class="masthead">
+      <span class="eyebrow">A Traveling Set, Rendered</span>
+      <h1>Campaign Chess</h1>
+      <div class="sub">Choose how you'd like to play.</div>
+    </div>
 
-    <!-- Main content -->
-    <main class="content fade-in">
-        <h2><strong>Don't make yourself<br>A part of the bundle</strong></h2>
-    </main>
+    <div class="mode-grid">
+      <div class="card mode-card" id="modeInviteCard">
+        <span class="glyph">✉</span>
+        <h3>Invite a Friend</h3>
+        <p>Generate a link and play live from two devices, anywhere.</p>
+      </div>
+      <div class="card mode-card" id="modeLocalCard">
+        <span class="glyph">⚔</span>
+        <h3>Player vs Player</h3>
+        <p>Pass the same device back and forth across the board.</p>
+      </div>
+      <div class="card mode-card" id="modeComputerCard">
+        <span class="glyph">♞</span>
+        <h3>Player vs Computer</h3>
+        <p>Pick a difficulty, from a gentle opener to a sharp opponent.</p>
+      </div>
+    </div>
+  </div>
 
-    <!-- JS -->
-    <script>
-        // Simple fade-in on load
-        window.addEventListener("load", () => {
-            document.querySelector(".fade-in").classList.add("show");
-        });
-    </script>
+  <!-- ============== COMPUTER SETUP ============== -->
+  <div id="computer-setup-screen" class="screen hidden">
+    <button class="back-link">&larr; Back to menu</button>
+    <div class="masthead">
+      <span class="eyebrow">Player vs Computer</span>
+      <h1 style="font-size:32px;">Set the Terms</h1>
+    </div>
+    <div class="sub-panel">
+      <div class="card">
+        <h2>Difficulty</h2>
+        <div class="choice-row">
+          <button data-difficulty="easy">Easy</button>
+          <button data-difficulty="mid">Mid</button>
+          <button data-difficulty="hard">Hard</button>
+          <button data-difficulty="expert">Expert</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Your Color</h2>
+        <div class="choice-row">
+          <button data-color="w">White</button>
+          <button data-color="b">Black</button>
+          <button data-color="random">Random</button>
+        </div>
+      </div>
+      <button id="beginComputerGameBtn">Begin Game</button>
+    </div>
+  </div>
+
+  <!-- ============== INVITE / CONNECTING ============== -->
+  <div id="invite-screen" class="screen hidden">
+    <button class="back-link">&larr; Back to menu</button>
+    <div class="masthead">
+      <span class="eyebrow">Invite a Friend</span>
+      <h1 style="font-size:32px;">Opening the Board</h1>
+    </div>
+    <div class="sub-panel">
+      <div class="card">
+        <div class="pulse-row">
+          <span class="pulse-dot"></span>
+          <span class="pulse-label" id="inviteStatusLabel">Preparing your board…</span>
+        </div>
+        <div class="invite-box" id="inviteLinkRow" style="display:none; margin-top:14px;">
+          <input type="text" id="inviteLinkInput" readonly>
+          <button id="copyLinkBtn">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== GAME ===================== -->
+  <div id="game-screen" class="screen hidden">
+    <div class="masthead">
+      <span class="eyebrow">A Traveling Set, Rendered</span>
+      <h1>Campaign Chess</h1>
+    </div>
+
+    <div class="case">
+      <div class="board-wrap">
+        <div class="board-hinge left"></div>
+        <div class="board-hinge right"></div>
+        <div class="board" id="board"></div>
+      </div>
+
+      <div class="panel">
+        <div class="card">
+          <h2>Standing</h2>
+          <div class="status-line" id="status">White to open.</div>
+          <div class="turn-chip"><span class="turn-dot" id="turnDot"></span><span id="turnLabel">White to move</span></div>
+          <div class="mode-note" id="modeNote"></div>
+        </div>
+
+        <div class="card">
+          <h2>Captured</h2>
+          <div class="trays">
+            <div class="tray"><span class="label">Taken from Black</span><span id="capturedByWhite"></span></div>
+            <div class="tray"><span class="label">Taken from White</span><span id="capturedByBlack"></span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Ledger</h2>
+          <div class="history"><ol id="moveList"></ol></div>
+        </div>
+
+        <div class="buttons">
+          <button id="undoBtn">Undo</button>
+          <button class="secondary" id="resetBtn">New Game</button>
+        </div>
+        <div class="buttons">
+          <button class="secondary back-link" id="leaveGameBtn">Leave to Menu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Legal moves only &middot; check, checkmate &amp; stalemate detected &middot; castling, en passant &amp; promotion supported</footer>
+
+  <div class="promo-overlay" id="promoOverlay">
+    <div class="promo-box">
+      <p>Promote pawn to</p>
+      <div class="promo-choices" id="promoChoices"></div>
+    </div>
+  </div>
+
+  <script src="js/utils-pieces.js"></script>
+  <script src="js/board-ui.js"></script>
+  <script src="js/ai-engine.js"></script>
+  <script src="js/game-controller.js"></script>
+  <script src="js/mode-local-pvp.js"></script>
+  <script src="js/mode-vs-computer.js"></script>
+  <script src="js/mode-online-friend.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
