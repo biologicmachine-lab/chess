@@ -22,4 +22,3 @@ App.Modes.localPvp = function localPvp() {
     }
   };
 };
-
