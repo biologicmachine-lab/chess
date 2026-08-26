@@ -19,6 +19,9 @@ App.Modes.localPvp = function localPvp() {
 
     init(controller) {
       controller.setModeNote('Same device — pass it over after each move.');
+      // Rotate Black's pieces 180deg so they read upright to whoever is
+      // sitting opposite, since this mode passes one device back and forth.
+      document.getElementById('board').classList.add('inward-facing');
     }
   };
 };
